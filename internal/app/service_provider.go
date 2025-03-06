@@ -21,6 +21,7 @@ type serviceProvider struct {
 }
 
 func NewServiceProvider() *serviceProvider {
+
 	return &serviceProvider{}
 }
 
@@ -50,7 +51,7 @@ func (s *serviceProvider) HTTPConfig() config.HTTPConfig {
 	return s.httpConfig
 }
 
-func (s *serviceProvider) GetPgPool(ctx context.Context) *pgxpool.Pool {
+func (s *serviceProvider) PgPool(ctx context.Context) *pgxpool.Pool {
 	if s.pgPool == nil {
 		pool, err := pgxpool.New(ctx, "postgres://postgres:260616@localhost:5432/tasks?sslmode=disable")
 		if err != nil {
@@ -69,17 +70,17 @@ func (s *serviceProvider) GetPgPool(ctx context.Context) *pgxpool.Pool {
 
 }
 
-func (s *serviceProvider) GetToDoRepository(ctx context.Context) repository.Repository {
+func (s *serviceProvider) ToDoRepository(ctx context.Context) repository.Repository {
 	if s.todoRepository == nil {
-		s.todoRepository = todorepository.NewRepository(s.GetPgPool(ctx))
+		s.todoRepository = todorepository.NewRepository(s.PgPool(ctx))
 	}
 
 	return s.todoRepository
 }
 
-func (s *serviceProvider) GetToDoService(ctx context.Context) service.ToDoService {
+func (s *serviceProvider) ToDoService(ctx context.Context) service.ToDoService {
 	if s.todoService == nil {
-		s.todoService = todoservice.NewService(s.GetToDoRepository(ctx))
+		s.todoService = todoservice.NewService(s.ToDoRepository(ctx))
 	}
 
 	return s.todoService

@@ -9,6 +9,6 @@ import (
 type Repository interface {
 	Get(ctx context.Context) ([]model.Task, error)
 	Create(ctx context.Context, task model.Task)
-	// Update(id int) error
-	// Delete(id int) error
+	Update(ctx context.Context, task model.Task, id int32) error
+	Delete(ctx context.Context, id int32) error
 }

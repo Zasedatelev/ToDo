@@ -14,6 +14,7 @@ func (s *serv) Get(c *fiber.Ctx) {
 		c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Data not found",
 		})
+		return
 	}
 	c.Set("Content-Type", "application/json")
 	c.Status(fiber.StatusOK).JSON(tasks)

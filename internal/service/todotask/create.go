@@ -10,8 +10,12 @@ func (s *serv) Create(c *fiber.Ctx) {
 	reqCtx := c.Context()
 	if err := c.BodyParser(&task); err != nil {
 		c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"message": "Invalid json",
+			"message": "Invalid input",
 		})
+		return
 	}
+
+	c.Status(fiber.StatusCreated)
 	s.repo.Create(reqCtx, task)
+
 }

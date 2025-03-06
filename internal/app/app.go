@@ -2,7 +2,6 @@ package app
 
 import (
 	"context"
-	"log"
 
 	"github.com/Zasedatelev/ToDo.git/internal/config"
 	"github.com/gofiber/fiber"
@@ -18,19 +17,14 @@ func NewApp(ctx context.Context) (*App, error) {
 
 	err := a.initDeps(ctx)
 
-	if a.ServiceProvider == nil {
-		log.Println("ServiceProvider is nil")
-	}
-	if a.ServiceProvider.todoService == nil {
-		log.Println("todoService is nil")
-	}
-
-	a.Server.Get("/tasks", a.ServiceProvider.todoService.Get)     //!!!! invalid memory address or nil pointer dereference
-	a.Server.Post("/tasks", a.ServiceProvider.todoService.Create) //!!!!! invalid memory address or nil pointer dereference
-
 	if err != nil {
 		return nil, err
 	}
+
+	a.Server.Get("/tasks", a.ServiceProvider.todoService.Get)
+	a.Server.Post("/tasks", a.ServiceProvider.todoService.Create)
+	a.Server.Delete("/tasks/:id", a.ServiceProvider.todoService.Delete)
+	a.Server.Put("/tasks/:id", a.ServiceProvider.todoService.Update)
 
 	return a, nil
 }
@@ -55,8 +49,14 @@ func (a *App) initDeps(ctx context.Context) error {
 
 	return nil
 }
-func (a *App) initServiceProvider(_ context.Context) error {
+func (a *App) initServiceProvider(ctx context.Context) error {
 	a.ServiceProvider = NewServiceProvider()
+	a.ServiceProvider.pgConfig = a.ServiceProvider.PGConfig()
+	a.ServiceProvider.pgPool = a.ServiceProvider.PgPool(ctx)
+	a.ServiceProvider.httpConfig = a.ServiceProvider.HTTPConfig()
+	a.ServiceProvider.todoRepository = a.ServiceProvider.ToDoRepository(ctx)
+	a.ServiceProvider.todoService = a.ServiceProvider.ToDoService(ctx)
+
 	return nil
 }
 
@@ -77,8 +77,6 @@ func (a *App) initHTTPServer(_ context.Context) error {
 }
 
 func (a *App) runServer() error {
-
-	// log.Printf("Server is running on %s", a.ServiceProvider.HTTPConfig().Port())
 
 	err := a.Server.Listen("8080")
 

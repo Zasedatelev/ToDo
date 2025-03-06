@@ -26,7 +26,7 @@ func (r *ToDoRepository) Get(ctx context.Context) ([]model.Task, error) {
 	tasks := []model.Task{}
 
 	for rows.Next() {
-		err = rows.Scan(task.TaskId, &task.Description, &task.Status)
+		err = rows.Scan(&task.TaskId, &task.Title, &task.Description, &task.Status, &task.CreatedAt, &task.UpdatedAt)
 		if err != nil {
 			log.Fatalf("scan failed: %v\n", err)
 		}

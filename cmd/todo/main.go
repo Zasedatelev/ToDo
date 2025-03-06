@@ -12,7 +12,7 @@ func main() {
 
 	app, err := app.NewApp(ctx)
 	if err != nil {
-		log.Fatalf("failed to init app: %s", err.Error())
+		log.Fatalf("failed to init app: %w", err.Error())
 	}
 
 	err = app.Run()
